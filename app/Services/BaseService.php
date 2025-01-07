@@ -2,11 +2,8 @@
 
 namespace App\Services;
 
-use Auth;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Str;
 
 abstract class BaseService {
     protected function getLimit(Builder $query, int $limit)
@@ -75,7 +72,11 @@ abstract class BaseService {
         $offset = ($page - 1) * $limit;
 
         // Order by created_at desc by default
-        $query = $query->orderBy('created_at', $orderBy);
+        if ($query) {
+            $query = $query->orderBy('created_at', $orderBy);
+        } else {
+            throw new Exception('Query not found');
+        }
 
         if (isset($search)) {
             $query = $query->where($columns, 'like', '%' . $search . '%');

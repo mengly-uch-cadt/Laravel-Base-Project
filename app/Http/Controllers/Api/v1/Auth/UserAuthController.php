@@ -25,14 +25,13 @@ class UserAuthController extends BaseAPI
             $params['password'] = $request->password;
             $params['name'] = $request->name;
             $params['role'] = 'user';
-            $user = $this->AuthSV->register($request, $params['role']);
+            $user = $this->AuthSV->register($params);
+            return $this->successResponse($user, 'User registered successfully');
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
 
-        return $this->successResponse($user, 'User registered successfully');
     }
-
     // Login User
     public function login(Request $request)
     {
@@ -41,7 +40,7 @@ class UserAuthController extends BaseAPI
             $userData = $request->only('email', 'name');
             $role = 'user';
             $user = $this->AuthSV->login($credentials, $userData, $role);
-            return $this->successResponse($user, 'User logged in successfully');
+            return $user;
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
@@ -51,12 +50,21 @@ class UserAuthController extends BaseAPI
     public function refreshToken()
     {
         try {
-            $role = 'user';
-            $token = $this->AuthSV->refreshToken($role);
-            return $this->successResponse($token, 'Token refreshed successfully');
+            $token = $this->AuthSV->refreshToken();
+            return $token;
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
     }
 
+    // Logout
+    public function logout(Request $request)
+    {
+        try {
+            $this->AuthSV->logout($request->user());
+            return $this->successResponse(null, 'User logged out successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
+        }
+    }
 }

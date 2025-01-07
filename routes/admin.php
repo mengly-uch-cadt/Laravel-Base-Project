@@ -1,7 +1,23 @@
 <?php
 
+use App\Http\Controllers\Api\v1\Auth\AdminAuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:api')->group(function () {
-    Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard']);
+/*///////////////////////////////////////////
+*
+*           PUBLIC API
+*
+*///////////////////////////////////////////
+Route::post('/register', [AdminAuthController::class, 'register']);
+Route::post('/login', [AdminAuthController::class, 'login']);
+
+
+/*///////////////////////////////////////////
+*
+*           PRIVATE API
+*
+*///////////////////////////////////////////
+Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($router) {
+    Route::post('/refresh-token', [AdminAuthController::class, 'refreshToken']);
+    Route::post('/logout', [AdminAuthController::class, 'logout']);
 });
