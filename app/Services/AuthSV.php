@@ -57,7 +57,7 @@ class AuthSV
     {
         $query = $this->getQuery();
 
-        return $query->create([
+        return $query->create(attributes: [
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
